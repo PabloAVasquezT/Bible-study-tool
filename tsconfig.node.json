@@ -15,5 +15,5 @@
     "composite": true
   },
   // src/lib is shared with the data scripts, so it must not use DOM APIs.
-  "include": ["vite.config.ts", "scripts/**/*", "src/lib/**/*"]
+  "include": ["vite.config.ts", "scripts/**/*", "src/lib/**/*", "src/**/*.test.ts"]
 }

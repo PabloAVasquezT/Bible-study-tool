@@ -84,4 +84,4 @@ The flags are a bit mask:
 
 Inline fields use one-letter keys because there are hundreds of thousands of them: the KJV has 349,308 Strong's-tagged words. Whitespace is always a plain string and never carries flags.
 
-The KJV takes 14.1 MB on disk and about 2.3 MB with gzip, the compression GitHub Pages applies when it serves the files. The app loads one book at a time.
+The KJV takes 14.1 MB on disk and about 2.3 MB with gzip, which is what travels over the network when the server compresses the files. The app loads one book at a time.

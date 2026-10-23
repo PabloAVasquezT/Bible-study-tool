@@ -15,5 +15,7 @@
     "noEmit": true,
     "composite": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  // Tests run in Node and are checked by tsconfig.node.json.
+  "exclude": ["src/**/*.test.ts"]
 }
