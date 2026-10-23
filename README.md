@@ -2,7 +2,7 @@
 
 A free Bible study app for the web. It runs entirely in the browser: there is no backend and nothing to install, and it is designed for phones as well as desktops.
 
-> **Status:** early development. The project setup is in place; the reader and the data are next.
+> **Status:** early development. The KJV data is generated; the reader is next.
 
 ## Goals
 
@@ -41,7 +41,10 @@ npm run build      # production build in dist/
 npm run preview    # serve the production build
 npm run typecheck  # type-check the app and the scripts
 npm test           # run the tests (node:test)
+npm run data:bibles  # regenerate public/data/bibles/ from the upstream sources
 ```
+
+The generated data is committed, so you only need to regenerate it when a source or the converter changes. See [docs/data-format.md](docs/data-format.md) for the file layout.
 
 ### Tech stack
 
