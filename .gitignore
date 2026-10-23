@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+.vite/
+
+# Raw source downloads used by the data scripts (only the converted data is committed)
+.cache/
+
+# Logs and local env
+*.log
+.env
+.env.*
+
+# Online Bible module files must never be committed (see README, "Content and licenses")
+*.Dat
+*.Ext
+
+# Editors and OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
