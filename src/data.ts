@@ -1,6 +1,7 @@
 // Loads the static data in public/data/. Promises are cached so React's use() can read them.
 import type { BibleInfo, BibleSummary, BookFile } from './lib/bible.ts'
 import type { BookId } from './lib/books.ts'
+import { strongsLocation, type LexiconEntry, type LexiconInfo } from './lib/lexicon.ts'
 
 const cache = new Map<string, Promise<unknown>>()
 
@@ -28,4 +29,33 @@ export function loadBibleInfo(bible: string): Promise<BibleInfo> {
 
 export function loadBook(bible: string, book: BookId): Promise<BookFile> {
   return load(`bibles/${bible}/${book}.json`)
+}
+
+export function loadLexicons(): Promise<LexiconInfo[]> {
+  return load('lexicons/index.json')
+}
+
+export interface LexiconResult {
+  info: LexiconInfo
+  /** Undefined for numbers the lexicon has no entry for. */
+  entry?: LexiconEntry
+}
+
+const entries = new Map<string, Promise<LexiconResult | undefined>>()
+
+/** Looks up a Strong's number such as "G26" in the lexicon that covers it. */
+export function loadLexiconEntry(strong: string): Promise<LexiconResult | undefined> {
+  let promise = entries.get(strong)
+  if (!promise) {
+    promise = loadLexicons().then(async (lexicons) => {
+      const info = lexicons.find((lexicon) => lexicon.prefix === strong[0])
+      const location = info && strongsLocation(strong, info.chunkSize)
+      if (!info || !location) return undefined
+      const chunk = await load<Record<string, LexiconEntry>>(`lexicons/${info.id}/${location.chunk}.json`)
+      return { info, entry: chunk[strong] }
+    })
+    promise.catch(() => entries.delete(strong))
+    entries.set(strong, promise)
+  }
+  return promise
 }

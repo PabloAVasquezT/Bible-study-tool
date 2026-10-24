@@ -1,4 +1,5 @@
 import { Suspense, useEffect } from 'react'
+import { CreditsPage } from './CreditsPage.tsx'
 import { parsePassagePath } from './lib/passage.ts'
 import { ErrorBoundary, ErrorPage, LoadingPage, NotFoundPage } from './pages.tsx'
 import { readPreference } from './preferences.ts'
@@ -16,13 +17,11 @@ export function App() {
   }
 
   const passage = parsePassagePath(path)
-  if (!passage) return <NotFoundPage />
+  if (!passage && path !== '/credits') return <NotFoundPage />
 
   return (
     <ErrorBoundary resetKey={path} fallback={(error) => <ErrorPage error={error} />}>
-      <Suspense fallback={<LoadingPage />}>
-        <ReaderPage passage={passage} />
-      </Suspense>
+      <Suspense fallback={<LoadingPage />}>{passage ? <ReaderPage passage={passage} /> : <CreditsPage />}</Suspense>
     </ErrorBoundary>
   )
 }

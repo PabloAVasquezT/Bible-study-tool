@@ -1,6 +1,8 @@
 import { use, useEffect, useState } from 'react'
 import { ChapterView } from './components/ChapterView.tsx'
 import { ArrowLeft, ArrowRight } from './components/icons/index.tsx'
+import { OpenStrongContext } from './components/Inlines.tsx'
+import { LexiconPanel } from './components/LexiconPanel.tsx'
 import { PassagePicker } from './components/PassagePicker.tsx'
 import { TopBar } from './components/TopBar.tsx'
 import { loadBibleInfo, loadBibles, loadBook } from './data.ts'
@@ -15,6 +17,7 @@ export function ReaderPage({ passage }: { passage: Passage }) {
   const book = use(loadBook(passage.bible, passage.book))
   const [showStrong, setShowStrong] = usePreference('showStrong', false)
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [strong, setStrong] = useState<string>()
 
   const bookInfo = info.books.find((b) => b.id === passage.book)
   const chapter = book.chapters[passage.chapter - 1]
@@ -36,7 +39,7 @@ export function ReaderPage({ passage }: { passage: Passage }) {
   // Arrow keys move between chapters on keyboards.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
-      if (pickerOpen || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+      if (pickerOpen || strong || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
       const target = event.key === 'ArrowLeft' ? previous : event.key === 'ArrowRight' ? next : undefined
       if (target) navigate(pathOf(target))
     }
@@ -64,15 +67,17 @@ export function ReaderPage({ passage }: { passage: Passage }) {
       />
 
       <main className="mx-auto max-w-prose px-5 pt-8 pb-12">
-        <ChapterView
-          chapterKey={pathOf(passage)}
-          bookName={bookInfo.name}
-          number={passage.chapter}
-          chapter={chapter}
-          selectedVerse={passage.verse}
-          verseHref={(verse) => passagePath({ ...passage, verse })}
-          showStrong={showStrong}
-        />
+        <OpenStrongContext value={setStrong}>
+          <ChapterView
+            chapterKey={pathOf(passage)}
+            bookName={bookInfo.name}
+            number={passage.chapter}
+            chapter={chapter}
+            selectedVerse={passage.verse}
+            verseHref={(verse) => passagePath({ ...passage, verse })}
+            showStrong={showStrong}
+          />
+        </OpenStrongContext>
 
         <nav className="mt-10 grid grid-cols-2 gap-3 font-sans text-sm" aria-label="Chapters">
           {previous ? (
@@ -90,7 +95,15 @@ export function ReaderPage({ passage }: { passage: Passage }) {
             </Link>
           )}
         </nav>
+
+        <p className="mt-8 text-center font-sans text-xs text-ink-faint">
+          <Link to="/credits" className="underline-offset-2 hover:text-ink-muted hover:underline">
+            Credits and licenses
+          </Link>
+        </p>
       </main>
+
+      <LexiconPanel strong={strong} onClose={() => setStrong(undefined)} />
 
       <PassagePicker
         open={pickerOpen}

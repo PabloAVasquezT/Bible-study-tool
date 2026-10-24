@@ -1,0 +1,5 @@
+{
+"G3200":{"id":"G3200","lemma":"μεμβράνα","lang":"grc","translit":"membrána","pronunciation":"mem-bran'-ah","derivation":["of Latin origin (\"membrane\");"],"definition":["a (written) sheep-skin"],"usage":["parchment."]},
+"G3201":{"id":"G3201","lemma":"μέμφομαι","lang":"grc","translit":"mémphomai","pronunciation":"mem'-fom-ahee","derivation":["middle voice of an apparently primary verb;"],"definition":["to blame"],"usage":["find fault."]},
+"G3202":{"id":"G3202","lemma":"μεμψίμοιρος","lang":"grc","translit":"mempsímoiros","pronunciation":"mem-psim'-oy-ros","derivation":["from a presumed derivative of ",{"ref":"G3201"}," and ",{"word":"μοῖρα","lang":"grc","translit":"moîra"}," (fate; akin to the base of ",{"ref":"G3313"},");"],"definition":["blaming fate, i.e. querulous (discontented)"],"usage":["complainer."]}
+}

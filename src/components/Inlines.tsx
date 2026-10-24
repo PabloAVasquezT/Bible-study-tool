@@ -1,5 +1,8 @@
-import { Fragment, useId } from 'react'
+import { createContext, Fragment, use, useId } from 'react'
 import { InlineFlag, type Inline, type Word } from '../lib/bible.ts'
+
+/** Opens the lexicon entry for a Strong's number. */
+export const OpenStrongContext = createContext<(strong: string) => void>(() => {})
 
 interface InlinesProps {
   inlines: Inline[]
@@ -15,14 +18,33 @@ export function Inlines({ inlines, showStrong }: InlinesProps) {
 }
 
 function WordView({ word, showStrong }: { word: Word; showStrong: boolean }) {
+  const openStrong = use(OpenStrongContext)
   const flags = word.f ?? 0
   const className = [flags & InlineFlag.added && 'italic', flags & InlineFlag.wordsOfJesus && 'text-jesus']
     .filter(Boolean)
     .join(' ')
+  const text = (part: string) => (flags & InlineFlag.divineName ? <DivineName text={part} /> : part)
+  if (!showStrong || !word.s) return <span className={className || undefined}>{text(word.t)}</span>
+
+  // Keep the last word and its numbers together, so a number never starts a line on its own.
+  const split = word.t.lastIndexOf(' ') + 1
   return (
     <span className={className || undefined}>
-      {flags & InlineFlag.divineName ? <DivineName text={word.t} /> : word.t}
-      {showStrong && word.s && <sup className="strong-number">{word.s}</sup>}
+      {split > 0 && text(word.t.slice(0, split))}
+      <span className="whitespace-nowrap">
+        {text(word.t.slice(split))}
+        {word.s.split(' ').map((strong) => (
+          <button
+            key={strong}
+            type="button"
+            onClick={() => openStrong(strong)}
+            className="strong-number"
+            aria-label={`Strong's ${strong}`}
+          >
+            {strong}
+          </button>
+        ))}
+      </span>
     </span>
   )
 }

@@ -1,0 +1,31 @@
+[
+  {
+    "id": "strongs-greek",
+    "name": "Strong's Greek Dictionary",
+    "prefix": "G",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": {
+      "name": "Ulrik Sandborg-Petersen, Strong’s Greek Dictionary in XML",
+      "url": "https://github.com/morphgnt/strongs-dictionary-xml"
+    },
+    "changes": "Converted from XML to JSON. The numbers Strong left unused are omitted.",
+    "entries": 5523,
+    "chunkSize": 100
+  },
+  {
+    "id": "strongs-hebrew",
+    "name": "Strong's Hebrew Dictionary",
+    "prefix": "H",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Open Scriptures Hebrew Bible Project",
+    "source": {
+      "name": "Open Scriptures Hebrew Lexicon",
+      "url": "https://github.com/openscriptures/HebrewLexicon"
+    },
+    "changes": "Converted from XML to JSON. The editors’ notes on their corrections are omitted.",
+    "entries": 8674,
+    "chunkSize": 100
+  }
+]

@@ -89,7 +89,23 @@ body {
     font-size: 0.55em;
     font-style: normal;
     font-weight: 500;
+    vertical-align: super;
+    line-height: 0;
     color: var(--color-ink-faint);
+    cursor: pointer;
+  }
+
+  .strong-number + .strong-number {
+    margin-left: 0.4em;
+  }
+
+  .strong-number:hover {
+    color: var(--color-accent);
+  }
+
+  /* Inter and Literata have no Hebrew, so use the best Hebrew font available. */
+  .hebrew {
+    font-family: 'SBL Hebrew', 'Ezra SIL', 'Noto Serif Hebrew', 'Times New Roman', serif;
   }
 
   .small-caps {
