@@ -1,6 +1,6 @@
 import { use, useEffect, type ReactNode } from 'react'
 import { ArrowLeft } from './components/icons/index.tsx'
-import { loadBibleInfo, loadBibles, loadLexicons } from './data.ts'
+import { loadBibleInfo, loadBibles, loadCrossReferenceInfo, loadLexicons } from './data.ts'
 import { Link } from './router.tsx'
 
 const REPOSITORY = 'https://github.com/PabloAVasquezT/Bible-study-tool'
@@ -10,6 +10,7 @@ export function CreditsPage() {
   // use() may be called in a loop, unlike hooks.
   const bibles = use(loadBibles()).map((bible) => use(loadBibleInfo(bible.id)))
   const lexicons = use(loadLexicons())
+  const crossReferences = use(loadCrossReferenceInfo())
 
   useEffect(() => {
     document.title = 'Credits · Bible Study Tool'
@@ -51,6 +52,14 @@ export function CreditsPage() {
               {lexicon.changes}
             </Credit>
           ))}
+        </Section>
+
+        <Section title="Cross references">
+          <Credit name={crossReferences.name}>
+            By <ExternalLink href={crossReferences.source.url}>{crossReferences.attribution}</ExternalLink>, mostly from the
+            public-domain Treasury of Scripture Knowledge, licensed under{' '}
+            <ExternalLink href={crossReferences.licenseUrl}>{crossReferences.license}</ExternalLink>. {crossReferences.changes}
+          </Credit>
         </Section>
 
         <Section title="Fonts and icons">

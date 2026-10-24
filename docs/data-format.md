@@ -145,3 +145,30 @@ The text fields are lists of lexicon inlines, each one of:
 - A **reference**, `{ "ref": "G25" }`: a link to another entry, possibly in the other lexicon.
 - A **word**, `{ "word": "ἄν", "lang": "grc", "translit"?: "án" }`: a Greek or Hebrew word quoted in the text.
 - A **core meaning**, `{ "def": "God" }`: Strong's Hebrew dictionary marks out the main senses of each word; the app shows them in bold.
+
+## Cross-references
+
+```
+public/data/crossrefs/
+  index.json      source, license and number of references
+  GEN.json        references from each verse of a book
+  ...
+```
+
+They come from [OpenBible.info](https://www.openbible.info/labs/cross-references/), mostly from the Treasury of Scripture Knowledge, under CC BY 4.0. Generate them after the Bibles, because the script checks every verse against the KJV's verse counts:
+
+```sh
+npm run data:crossrefs
+```
+
+A book file lays the references out in the same chapter and verse slots as the Bibles: `chapters[c - 1][v - 1]` lists the targets of verse *c*:*v*, best voted first. Each target is a verse such as `ROM.5.8` or a range such as `1JN.4.9-1JN.4.10`, which can cross chapters and even books (`LEV.27.34-NUM.1.1`). The books use the same USFM codes as everywhere else; [`src/lib/crossrefs.ts`](../src/lib/crossrefs.ts) parses and labels them.
+
+```json
+{"id":"JHN","chapters":[
+[
+["GEN.1.1","JHN.17.5", ...],
+...
+]]}
+```
+
+Compared with the source, references with no votes or a negative score are left out, and OpenBible's 3 John 1:15 (the ESV numbering) is mapped to the KJV's 3 John 1:14.

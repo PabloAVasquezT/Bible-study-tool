@@ -26,6 +26,15 @@ export interface Note {
 /** Plain text is stored as a bare string to keep the files small. */
 export type Inline = string | Word | Note
 
+/** The text of some inlines without notes or markup, e.g. for a preview. */
+export function plainText(inlines: Inline[]): string {
+  return inlines
+    .map((inline) => (typeof inline === 'string' ? inline : 'note' in inline ? '' : inline.t))
+    .join('')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 /** How a verse starts: a new paragraph, a new poetry line, or a new stanza. */
 export type VerseBreak = 'paragraph' | 'line' | 'stanza'
 

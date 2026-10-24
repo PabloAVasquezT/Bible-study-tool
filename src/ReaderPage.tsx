@@ -1,5 +1,6 @@
 import { use, useEffect, useState } from 'react'
 import { ChapterView } from './components/ChapterView.tsx'
+import { CrossReferencePanel } from './components/CrossReferencePanel.tsx'
 import { ArrowLeft, ArrowRight } from './components/icons/index.tsx'
 import { OpenStrongContext } from './components/Inlines.tsx'
 import { LexiconPanel } from './components/LexiconPanel.tsx'
@@ -18,6 +19,7 @@ export function ReaderPage({ passage }: { passage: Passage }) {
   const [showStrong, setShowStrong] = usePreference('showStrong', false)
   const [pickerOpen, setPickerOpen] = useState(false)
   const [strong, setStrong] = useState<string>()
+  const [crossReferenceVerse, setCrossReferenceVerse] = useState<number>()
 
   const bookInfo = info.books.find((b) => b.id === passage.book)
   const chapter = book.chapters[passage.chapter - 1]
@@ -39,7 +41,7 @@ export function ReaderPage({ passage }: { passage: Passage }) {
   // Arrow keys move between chapters on keyboards.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
-      if (pickerOpen || strong || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+      if (pickerOpen || strong || crossReferenceVerse || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
       const target = event.key === 'ArrowLeft' ? previous : event.key === 'ArrowRight' ? next : undefined
       if (target) navigate(pathOf(target))
     }
@@ -75,6 +77,7 @@ export function ReaderPage({ passage }: { passage: Passage }) {
             chapter={chapter}
             selectedVerse={passage.verse}
             verseHref={(verse) => passagePath({ ...passage, verse })}
+            onVerseSelect={setCrossReferenceVerse}
             showStrong={showStrong}
           />
         </OpenStrongContext>
@@ -104,6 +107,11 @@ export function ReaderPage({ passage }: { passage: Passage }) {
       </main>
 
       <LexiconPanel strong={strong} onClose={() => setStrong(undefined)} />
+      <CrossReferencePanel
+        bible={info}
+        verse={crossReferenceVerse === undefined ? undefined : { book: passage.book, chapter: passage.chapter, verse: crossReferenceVerse }}
+        onClose={() => setCrossReferenceVerse(undefined)}
+      />
 
       <PassagePicker
         open={pickerOpen}

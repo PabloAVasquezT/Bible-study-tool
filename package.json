@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
     "test": "node --test \"src/**/*.test.ts\" \"scripts/**/*.test.ts\"",
     "data:bibles": "node scripts/data/build-bibles.ts",
-    "data:lexicons": "node scripts/data/build-lexicons.ts"
+    "data:lexicons": "node scripts/data/build-lexicons.ts",
+    "data:crossrefs": "node scripts/data/build-crossrefs.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

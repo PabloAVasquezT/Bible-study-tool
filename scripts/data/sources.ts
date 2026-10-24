@@ -20,6 +20,11 @@ export const sources = {
     url: 'https://raw.githubusercontent.com/morphgnt/strongs-dictionary-xml/dd6758b82f46b620804a8ea677d715844679eea1/strongsgreek.xml',
     sha256: '91474213b208a4e487d35f85c10e5c90737acc69082dad15dec5431406003545'
   },
+  // Not versioned upstream: the hash is what pins it.
+  'openbible-crossrefs': {
+    url: 'https://a.openbible.info/data/cross-references.zip',
+    sha256: '5f61f4525156b7c7b8f7ae07e3a4225038cf4b60def39247df8b92916e14c56f'
+  },
   'strongs-hebrew': {
     url: 'https://raw.githubusercontent.com/openscriptures/HebrewLexicon/21c9add13bc727d3a951361778e97e3ff7afd1ce/HebrewStrong.xml',
     sha256: 'a628f4f89f8bdaf2483fd3faf1abc8653cc6717758dfc9f24beb7571d9bdd0c4'

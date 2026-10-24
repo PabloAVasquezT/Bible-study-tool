@@ -11,6 +11,8 @@ interface ChapterViewProps {
   chapter: Chapter
   selectedVerse?: number
   verseHref: (verse: number) => string
+  /** Called when a verse number is tapped. */
+  onVerseSelect: (verse: number) => void
   showStrong: boolean
 }
 
@@ -41,7 +43,16 @@ function toBlocks(verses: Verse[]): Block[] {
   return blocks
 }
 
-export function ChapterView({ chapterKey, bookName, number, chapter, selectedVerse, verseHref, showStrong }: ChapterViewProps) {
+export function ChapterView({
+  chapterKey,
+  bookName,
+  number,
+  chapter,
+  selectedVerse,
+  verseHref,
+  onVerseSelect,
+  showStrong
+}: ChapterViewProps) {
   const shownKey = useRef<string>(undefined)
 
   // Scroll when arriving at a chapter, but not when a verse of the same chapter is selected.
@@ -56,7 +67,13 @@ export function ChapterView({ chapterKey, bookName, number, chapter, selectedVer
   const renderLine = (line: Line) =>
     line.map(({ number: n, verse }) => (
       <span key={n} id={`v${n}`} className={n === selectedVerse ? 'verse-selected' : undefined}>
-        <Link to={verseHref(n)} replace className="verse-number" aria-label={`Verse ${n}`}>
+        <Link
+          to={verseHref(n)}
+          replace
+          onClick={() => onVerseSelect(n)}
+          className="verse-number"
+          aria-label={`Verse ${n}: cross references`}
+        >
           {n}
         </Link>
         <Inlines inlines={verse.text} showStrong={showStrong} />{' '}

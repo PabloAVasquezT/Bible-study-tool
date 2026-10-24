@@ -1,9 +1,9 @@
-import { Fragment, Suspense, use, useEffect, useRef, useState } from 'react'
+import { Fragment, Suspense, use, useEffect, useState } from 'react'
 import { loadLexiconEntry } from '../data.ts'
 import type { LexiconInline } from '../lib/lexicon.ts'
 import { ErrorBoundary } from '../pages.tsx'
 import { Link } from '../router.tsx'
-import { ArrowLeft, X } from './icons/index.tsx'
+import { Sheet, SheetFooter } from './Sheet.tsx'
 
 const RIGHT_TO_LEFT = new Set(['he', 'arc'])
 
@@ -13,56 +13,30 @@ interface LexiconPanelProps {
   onClose: () => void
 }
 
-/** A bottom sheet on phones and a dialog on larger screens, with its own back history. */
+/** The entry for a Strong's number, with a back history for the references it links to. */
 export function LexiconPanel({ strong, onClose }: LexiconPanelProps) {
-  const dialog = useRef<HTMLDialogElement>(null)
   const [history, setHistory] = useState<string[]>([])
   const current = history.at(-1)
 
   useEffect(() => {
-    const element = dialog.current
-    if (!element) return
-    if (strong) {
-      setHistory([strong])
-      if (!element.open) element.showModal()
-    } else if (element.open) {
-      element.close()
-    }
+    if (strong) setHistory([strong])
   }, [strong])
 
   return (
-    <dialog
-      ref={dialog}
+    <Sheet
+      open={strong !== undefined}
+      title={`Strong's ${current ?? ''}`}
       onClose={onClose}
-      // A click on the backdrop lands on the dialog element itself.
-      onClick={(event) => event.target === dialog.current && onClose()}
-      className="mx-0 mt-auto mb-0 w-full max-w-none rounded-t-2xl border-t border-line bg-surface text-ink backdrop:bg-black/40 sm:m-auto sm:max-w-lg sm:rounded-2xl sm:border sm:shadow-xl"
+      onBack={history.length > 1 ? () => setHistory(history.slice(0, -1)) : undefined}
     >
-      <div className="flex max-h-[85dvh] flex-col pb-[env(safe-area-inset-bottom)] sm:max-h-[80dvh]">
-        <div className="flex h-14 shrink-0 items-center gap-2 border-b border-line px-2">
-          {history.length > 1 ? (
-            <button type="button" onClick={() => setHistory(history.slice(0, -1))} className="icon-button" aria-label="Back">
-              <ArrowLeft />
-            </button>
-          ) : (
-            <span className="w-10" />
-          )}
-          <h2 className="flex-1 text-center font-semibold">Strong's {current}</h2>
-          <button type="button" onClick={onClose} className="icon-button" aria-label="Close">
-            <X />
-          </button>
-        </div>
-        <div className="overflow-y-auto overscroll-contain px-5 pt-5 pb-6">
-          {current && (
-            <ErrorBoundary resetKey={current} fallback={(error) => <p className="text-ink-muted">{error.message}</p>}>
-              <Suspense fallback={<EntrySkeleton />}>
-                <EntryView strong={current} onOpen={(ref) => setHistory([...history, ref])} />
-              </Suspense>
-            </ErrorBoundary>
-          )}
-        </div>
-      </div>
-    </dialog>
+      {current && (
+        <ErrorBoundary resetKey={current} fallback={(error) => <p className="text-ink-muted">{error.message}</p>}>
+          <Suspense fallback={<EntrySkeleton />}>
+            <EntryView strong={current} onOpen={(ref) => setHistory([...history, ref])} />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </Sheet>
   )
 }
 
@@ -88,7 +62,7 @@ function EntryView({ strong, onOpen }: { strong: string; onOpen: (strong: string
       <Section title="In the King James Version" inlines={entry.usage} onOpen={onOpen} />
       <Section title="Note" inlines={entry.note} onOpen={onOpen} />
 
-      <footer className="mt-6 border-t border-line pt-3 text-xs text-ink-faint">
+      <SheetFooter>
         {info.name}
         {info.attribution && <>, {info.attribution}</>} ·{' '}
         <a href={info.licenseUrl} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
@@ -98,7 +72,7 @@ function EntryView({ strong, onOpen }: { strong: string; onOpen: (strong: string
         <Link to="/credits" className="underline-offset-2 hover:underline">
           Credits
         </Link>
-      </footer>
+      </SheetFooter>
     </article>
   )
 }

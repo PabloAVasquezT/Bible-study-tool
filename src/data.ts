@@ -1,6 +1,7 @@
 // Loads the static data in public/data/. Promises are cached so React's use() can read them.
 import type { BibleInfo, BibleSummary, BookFile } from './lib/bible.ts'
 import type { BookId } from './lib/books.ts'
+import type { CrossReferenceFile, CrossReferenceInfo } from './lib/crossrefs.ts'
 import { strongsLocation, type LexiconEntry, type LexiconInfo } from './lib/lexicon.ts'
 
 const cache = new Map<string, Promise<unknown>>()
@@ -29,6 +30,14 @@ export function loadBibleInfo(bible: string): Promise<BibleInfo> {
 
 export function loadBook(bible: string, book: BookId): Promise<BookFile> {
   return load(`bibles/${bible}/${book}.json`)
+}
+
+export function loadCrossReferenceInfo(): Promise<CrossReferenceInfo> {
+  return load('crossrefs/index.json')
+}
+
+export function loadCrossReferences(book: BookId): Promise<CrossReferenceFile> {
+  return load(`crossrefs/${book}.json`)
 }
 
 export function loadLexicons(): Promise<LexiconInfo[]> {

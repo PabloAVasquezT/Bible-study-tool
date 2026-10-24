@@ -1,0 +1,12 @@
+{
+  "name": "Cross References",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "attribution": "OpenBible.info",
+  "source": {
+    "name": "OpenBible.info Cross References",
+    "url": "https://www.openbible.info/labs/cross-references/"
+  },
+  "changes": "Converted to JSON and sorted by votes. References voted down or not voted on are omitted, and 3 John 1:15 is mapped to the KJV’s 3 John 1:14.",
+  "references": 341291
+}
