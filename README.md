@@ -46,6 +46,17 @@ npm run data:bibles  # regenerate public/data/bibles/ from the upstream sources
 
 The generated data is committed, so you only need to regenerate it when a source or the converter changes. See [docs/data-format.md](docs/data-format.md) for the file layout.
 
+### Deployment
+
+The app is a set of static files. The [`Dockerfile`](Dockerfile) checks and builds it, then serves `dist/` with nginx on port 80:
+
+```sh
+docker build -t bible-study-tool .
+docker run --rm -p 8080:80 bible-study-tool   # http://localhost:8080
+```
+
+The nginx configuration in [`docker/`](docker/) sends every app route (such as `/kjv/jhn/3/16`) to `index.html`, serves precompressed files, caches hashed assets for a year and revalidates the Bible data on each visit.
+
 ### Tech stack
 
 React 19, TypeScript, Vite and Tailwind CSS 4. Dependencies are kept to a minimum on purpose: routing, storage, the service worker and data parsing are small pieces of our own code rather than libraries.
