@@ -16,7 +16,8 @@
     "test": "node --test \"src/**/*.test.ts\" \"scripts/**/*.test.ts\"",
     "data:bibles": "node scripts/data/build-bibles.ts",
     "data:lexicons": "node scripts/data/build-lexicons.ts",
-    "data:crossrefs": "node scripts/data/build-crossrefs.ts"
+    "data:crossrefs": "node scripts/data/build-crossrefs.ts",
+    "data:search": "node scripts/data/build-search.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

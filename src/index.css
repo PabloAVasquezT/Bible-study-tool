@@ -142,6 +142,24 @@ body {
     box-shadow: 0 10px 30px rgb(0 0 0 / 0.15);
   }
 
+  /* A row that scrolls sideways by touch or trackpad, without a visible scrollbar. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .search-match {
+    border-radius: 0.2em;
+    background: var(--color-accent-soft);
+    color: inherit;
+    font-weight: 600;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
   .menu-popover {
     width: min(22rem, calc(100vw - 2rem));
     margin: auto;

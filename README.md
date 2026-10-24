@@ -2,7 +2,7 @@
 
 A free Bible study app for the web. It runs entirely in the browser: there is no backend and nothing to install, and it is designed for phones as well as desktops.
 
-> **Status:** early development. You can read the KJV and the Reina-Valera 1909, look up Strong's numbers in the Greek and Hebrew dictionaries, and follow cross-references from any verse.
+> **Status:** early development. You can read the KJV and the Reina-Valera 1909, search them by word or Strong's number, look up Strong's numbers in the Greek and Hebrew dictionaries, and follow cross-references from any verse.
 
 ## Goals
 
@@ -44,6 +44,7 @@ npm test           # run the tests (node:test)
 npm run data:bibles    # regenerate public/data/bibles/ from the upstream sources
 npm run data:lexicons  # regenerate public/data/lexicons/
 npm run data:crossrefs # regenerate public/data/crossrefs/ (after data:bibles)
+npm run data:search    # regenerate public/data/search/ (after data:bibles)
 ```
 
 The generated data is committed, so you only need to regenerate it when a source or the converter changes. See [docs/data-format.md](docs/data-format.md) for the file layout.

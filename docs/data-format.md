@@ -172,3 +172,38 @@ A book file lays the references out in the same chapter and verse slots as the B
 ```
 
 Compared with the source, references with no votes or a negative score are left out, and OpenBible's 3 John 1:15 (the ESV numbering) is mapped to the KJV's 3 John 1:14.
+
+## Search indexes
+
+```
+public/data/search/
+  kjv/
+    index.json        which index files exist
+    words/
+      a.json          words that start with "a"
+      ...
+      _.json          words that start with anything else
+    strongs/
+      G0.json         G1–G499
+      G1.json         G500–G999
+      ...
+```
+
+Generate them after the Bibles, from the generated Bible data:
+
+```sh
+npm run data:search
+```
+
+Verses are numbered 0, 1, 2… across the whole Bible, in the KJV's slots that every Bible shares: Genesis 1:1 is 0 and Revelation 22:21 is 31,101. `verseLocator` in [`src/lib/search.ts`](../src/lib/search.ts) turns those numbers back into book, chapter and verse.
+
+A word file maps each word to the verses that contain it, and a Strong's file maps each number to the verses where a word is tagged with it. To keep the files small, each list stores the difference from the previous verse: `[3, 7, 1]` means verses 3, 10 and 11.
+
+```json
+{
+"love":[731,84,12,...],
+"loved":[...]
+}
+```
+
+Words are indexed in their normalized form, which the app also applies to queries: lowercase, without accents (`crió` → `crio`) or ligatures (`Æneas` → `aeneas`), but keeping ñ. Notes are not indexed. A query finds the verses that contain all of its terms: words, prefixes ending in `*` (looked up among the words of one file), and Strong's numbers such as `G26`.

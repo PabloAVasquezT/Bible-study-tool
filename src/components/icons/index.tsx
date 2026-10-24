@@ -54,6 +54,13 @@ export const ArrowRight = (props: SVGProps<SVGSVGElement>) => (
   </Icon>
 )
 
+export const Search = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="m21 21-4.34-4.34" />
+    <circle cx="11" cy="11" r="8" />
+  </Icon>
+)
+
 export const X = (props: SVGProps<SVGSVGElement>) => (
   <Icon {...props}>
     <path d="M18 6 6 18" />

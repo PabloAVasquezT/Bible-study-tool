@@ -2,6 +2,7 @@
 import type { BibleInfo, BibleSummary, BookFile } from './lib/bible.ts'
 import type { BookId } from './lib/books.ts'
 import type { CrossReferenceFile, CrossReferenceInfo } from './lib/crossrefs.ts'
+import { decodePostings, intersect, parseQuery, strongsFile, union, wordFile, type SearchTerm } from './lib/search.ts'
 import { strongsLocation, type LexiconEntry, type LexiconInfo } from './lib/lexicon.ts'
 
 const cache = new Map<string, Promise<unknown>>()
@@ -38,6 +39,41 @@ export function loadCrossReferenceInfo(): Promise<CrossReferenceInfo> {
 
 export function loadCrossReferences(book: BookId): Promise<CrossReferenceFile> {
   return load(`crossrefs/${book}.json`)
+}
+
+interface SearchIndex {
+  wordFiles: string[]
+  strongsFiles: string[]
+}
+
+type Postings = Record<string, number[]>
+
+const searches = new Map<string, Promise<number[]>>()
+
+/** The verses, numbered across the whole Bible, that match every term of a query. */
+export function searchVerses(bible: string, query: string): Promise<number[]> {
+  const terms = parseQuery(query)
+  const key = `${bible} ${terms.map((term) => `${term.kind}:${term.value}`).join(' ')}`
+  let promise = searches.get(key)
+  if (!promise) {
+    promise = (async () => {
+      if (!terms.length) return []
+      const index = await load<SearchIndex>(`search/${bible}/index.json`)
+      const postingsOf = async (term: SearchTerm): Promise<number[]> => {
+        const strong = term.kind === 'strong'
+        const file = strong ? strongsFile(term.value) : wordFile(term.value)
+        if (!(strong ? index.strongsFiles : index.wordFiles).includes(file)) return []
+        const postings = await load<Postings>(`search/${bible}/${strong ? 'strongs' : 'words'}/${file}.json`)
+        if (term.kind !== 'prefix') return decodePostings(postings[term.value] ?? [])
+        return union(Object.keys(postings).filter((word) => word.startsWith(term.value)).map((word) => decodePostings(postings[word]!)))
+      }
+      const lists = await Promise.all(terms.map(postingsOf))
+      return lists.reduce((all, list) => intersect(all, list))
+    })()
+    promise.catch(() => searches.delete(key))
+    searches.set(key, promise)
+  }
+  return promise
 }
 
 export function loadLexicons(): Promise<LexiconInfo[]> {

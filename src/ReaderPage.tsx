@@ -7,7 +7,7 @@ import { LexiconPanel } from './components/LexiconPanel.tsx'
 import { PassagePicker } from './components/PassagePicker.tsx'
 import { TopBar } from './components/TopBar.tsx'
 import { loadBibleInfo, loadBibles, loadBook } from './data.ts'
-import { adjacentChapter, passagePath, type ChapterRef, type Passage } from './lib/passage.ts'
+import { adjacentChapter, passagePath, searchPath, type ChapterRef, type Passage } from './lib/passage.ts'
 import { NotFoundPage } from './pages.tsx'
 import { usePreference, writePreference } from './preferences.ts'
 import { Link, navigate } from './router.tsx'
@@ -38,10 +38,16 @@ export function ReaderPage({ passage }: { passage: Passage }) {
     writePreference('lastPassage', pathOf(passage))
   })
 
-  // Arrow keys move between chapters on keyboards.
+  // On keyboards, the arrow keys move between chapters and "/" opens the search.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
-      if (pickerOpen || strong || crossReferenceVerse || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+      if (pickerOpen || strong || crossReferenceVerse || event.altKey || event.ctrlKey || event.metaKey) return
+      if (event.key === '/') {
+        event.preventDefault()
+        navigate(searchPath(passage.bible))
+        return
+      }
+      if (event.shiftKey) return
       const target = event.key === 'ArrowLeft' ? previous : event.key === 'ArrowRight' ? next : undefined
       if (target) navigate(pathOf(target))
     }
@@ -61,6 +67,7 @@ export function ReaderPage({ passage }: { passage: Passage }) {
         bibles={bibles}
         bible={info}
         versionHref={(bible) => passagePath({ ...passage, bible })}
+        searchHref={searchPath(passage.bible)}
         previousHref={previous && pathOf(previous)}
         nextHref={next && pathOf(next)}
         showStrong={showStrong}

@@ -30,6 +30,17 @@ export function passagePath({ bible, book, chapter, verse }: Passage): string {
   return `/${bible}/${book.toLowerCase()}/${chapter}${verse === undefined ? '' : `/${verse}`}`
 }
 
+/** The search page of a Bible, e.g. /kjv/search?q=love. */
+export function searchPath(bible: string, query = ''): string {
+  const q = query.trim()
+  return `/${bible}/search${q ? `?q=${encodeURIComponent(q)}` : ''}`
+}
+
+/** Recognizes /kjv/search and returns the Bible's id. */
+export function parseSearchPath(path: string): string | undefined {
+  return /^\/([a-z0-9-]+)\/search\/?$/.exec(path)?.[1]
+}
+
 /** The chapter before or after the given one, crossing book boundaries. */
 export function adjacentChapter(books: BookInfo[], { book, chapter }: ChapterRef, step: 1 | -1): ChapterRef | undefined {
   const index = books.findIndex((info) => info.id === book)

@@ -1,7 +1,14 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import type { BookInfo } from './bible.ts'
-import { adjacentChapter, parsePassagePath, passagePath } from './passage.ts'
+import { adjacentChapter, parsePassagePath, parseSearchPath, passagePath, searchPath } from './passage.ts'
+
+test('builds and recognizes search paths', () => {
+  assert.equal(searchPath('kjv'), '/kjv/search')
+  assert.equal(searchPath('kjv', ' God so loved '), '/kjv/search?q=God%20so%20loved')
+  assert.equal(parseSearchPath('/rv1909/search'), 'rv1909')
+  assert.equal(parseSearchPath('/kjv/jhn/3'), undefined)
+})
 
 test('parses chapter and verse paths, in any case', () => {
   assert.deepEqual(parsePassagePath('/kjv/jhn/3'), { bible: 'kjv', book: 'JHN', chapter: 3 })
