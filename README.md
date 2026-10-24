@@ -2,7 +2,7 @@
 
 A free Bible study app for the web. It runs entirely in the browser: there is no backend and nothing to install, and it is designed for phones as well as desktops.
 
-> **Status:** early development. The KJV data is generated; the reader is next.
+> **Status:** early development. You can read the KJV and the Reina-Valera 1909; the lexicons and cross-references are next.
 
 ## Goals
 

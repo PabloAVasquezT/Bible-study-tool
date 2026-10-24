@@ -1,10 +1,14 @@
 import type { ReactNode } from 'react'
+import type { BibleSummary } from '../lib/bible.ts'
 import { Link } from '../router.tsx'
 import { ChevronDown, ChevronLeft, ChevronRight } from './icons/index.tsx'
+import { VersionMenu } from './VersionMenu.tsx'
 
 interface TopBarProps {
   label: string
-  bibleAbbreviation: string
+  bibles: BibleSummary[]
+  bible: BibleSummary
+  versionHref: (bible: string) => string
   previousHref?: string
   nextHref?: string
   showStrong: boolean
@@ -12,7 +16,17 @@ interface TopBarProps {
   onOpenPicker: () => void
 }
 
-export function TopBar({ label, bibleAbbreviation, previousHref, nextHref, showStrong, onToggleStrong, onOpenPicker }: TopBarProps) {
+export function TopBar({
+  label,
+  bibles,
+  bible,
+  versionHref,
+  previousHref,
+  nextHref,
+  showStrong,
+  onToggleStrong,
+  onOpenPicker
+}: TopBarProps) {
   return (
     <header className="sticky top-0 z-10 border-b border-line bg-canvas/90 pt-[env(safe-area-inset-top)] backdrop-blur">
       <div className="mx-auto flex h-14 max-w-3xl items-center gap-1 px-2">
@@ -20,15 +34,17 @@ export function TopBar({ label, bibleAbbreviation, previousHref, nextHref, showS
           <ChevronLeft />
         </ChapterLink>
 
-        <button
-          type="button"
-          onClick={onOpenPicker}
-          className="mx-auto flex min-w-0 items-center gap-1.5 rounded-lg px-3 py-1.5 hover:bg-sunken"
-        >
-          <span className="truncate font-semibold">{label}</span>
-          <span className="text-xs font-semibold text-ink-muted">{bibleAbbreviation}</span>
-          <ChevronDown className="shrink-0 text-ink-muted" width={16} height={16} />
-        </button>
+        <div className="mx-auto flex min-w-0 items-center">
+          <button
+            type="button"
+            onClick={onOpenPicker}
+            className="flex min-w-0 items-center gap-1 rounded-lg px-3 py-1.5 hover:bg-sunken"
+          >
+            <span className="truncate font-semibold">{label}</span>
+            <ChevronDown className="shrink-0 text-ink-muted" width={16} height={16} />
+          </button>
+          <VersionMenu bibles={bibles} current={bible} hrefFor={versionHref} />
+        </div>
 
         <button
           type="button"

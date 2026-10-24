@@ -3,13 +3,14 @@ import { ChapterView } from './components/ChapterView.tsx'
 import { ArrowLeft, ArrowRight } from './components/icons/index.tsx'
 import { PassagePicker } from './components/PassagePicker.tsx'
 import { TopBar } from './components/TopBar.tsx'
-import { loadBibleInfo, loadBook } from './data.ts'
+import { loadBibleInfo, loadBibles, loadBook } from './data.ts'
 import { adjacentChapter, passagePath, type ChapterRef, type Passage } from './lib/passage.ts'
 import { NotFoundPage } from './pages.tsx'
 import { usePreference, writePreference } from './preferences.ts'
 import { Link, navigate } from './router.tsx'
 
 export function ReaderPage({ passage }: { passage: Passage }) {
+  const bibles = use(loadBibles())
   const info = use(loadBibleInfo(passage.bible))
   const book = use(loadBook(passage.bible, passage.book))
   const [showStrong, setShowStrong] = usePreference('showStrong', false)
@@ -27,6 +28,8 @@ export function ReaderPage({ passage }: { passage: Passage }) {
   useEffect(() => {
     if (!valid) return
     document.title = `${label} (${info.abbreviation}) · Bible Study Tool`
+    // Lets the browser pick the right hyphenation, quotes and voice for the text.
+    document.documentElement.lang = info.language
     writePreference('lastPassage', pathOf(passage))
   })
 
@@ -50,7 +53,9 @@ export function ReaderPage({ passage }: { passage: Passage }) {
     <div className="min-h-dvh pb-[env(safe-area-inset-bottom)]">
       <TopBar
         label={label}
-        bibleAbbreviation={info.abbreviation}
+        bibles={bibles}
+        bible={info}
+        versionHref={(bible) => passagePath({ ...passage, bible })}
         previousHref={previous && pathOf(previous)}
         nextHref={next && pathOf(next)}
         showStrong={showStrong}

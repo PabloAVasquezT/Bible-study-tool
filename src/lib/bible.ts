@@ -10,9 +10,10 @@ export const InlineFlag = {
   wordsOfJesus: 4
 } as const
 
-/** A run of text with a Strong's number and/or style flags. */
+/** A run of text with Strong's numbers and/or style flags. */
 export interface Word {
   t: string
+  /** One or more Strong's numbers separated by spaces, e.g. "H430" or "G2424 G5547". */
   s?: string
   f?: number
 }

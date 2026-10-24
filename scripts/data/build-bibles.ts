@@ -3,7 +3,7 @@
 import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { BibleInfo, BibleSummary, BookFile } from '../../src/lib/bible.ts'
-import { BOOK_IDS } from '../../src/lib/books.ts'
+import { BOOK_IDS, type BookId } from '../../src/lib/books.ts'
 import { loadSource } from './download.ts'
 import type { SourceId } from './sources.ts'
 import { parseUsfm } from './usfm.ts'
@@ -15,6 +15,8 @@ interface BibleConfig extends Omit<BibleInfo, 'books'> {
   sourceId: SourceId
   /** Guards against a source silently losing or gaining verses. */
   expectedVerses: number
+  /** Replaces upstream book names, e.g. to make them consistent. */
+  bookNames?: Partial<Record<BookId, string>>
 }
 
 const bibles: BibleConfig[] = [
@@ -27,15 +29,28 @@ const bibles: BibleConfig[] = [
     source: { name: 'eBible.org', url: 'https://ebible.org/find/details.php?id=eng-kjv2006' },
     sourceId: 'eng-kjv2006',
     expectedVerses: 31102
+  },
+  {
+    id: 'rv1909',
+    name: 'Reina-Valera 1909',
+    abbreviation: 'RV1909',
+    language: 'es',
+    license: 'Public Domain',
+    source: { name: 'eBible.org', url: 'https://ebible.org/find/details.php?id=spaRV1909' },
+    sourceId: 'spa-rv1909',
+    expectedVerses: 31102,
+    // Upstream has "San Mateo" and "San Lucas" but "Marcos" and "Juan".
+    bookNames: { MAT: 'Mateo', LUK: 'Lucas' }
   }
 ]
 
-async function buildBible({ sourceId, expectedVerses, ...summary }: BibleConfig): Promise<BibleSummary> {
+async function buildBible({ sourceId, expectedVerses, bookNames = {}, ...summary }: BibleConfig): Promise<BibleSummary> {
   const archive = readZip(await loadSource(sourceId))
   const decoder = new TextDecoder('utf-8', { fatal: true })
   const books = [...archive]
     .filter(([name]) => name.endsWith('.usfm'))
     .map(([, data]) => parseUsfm(decoder.decode(data)))
+    .map((book) => ({ ...book, name: bookNames[book.id] ?? book.name }))
     .sort((a, b) => BOOK_IDS.indexOf(a.id) - BOOK_IDS.indexOf(b.id))
 
   const ids = books.map((book) => book.id).join(' ')
@@ -59,7 +74,7 @@ async function buildBible({ sourceId, expectedVerses, ...summary }: BibleConfig)
     books: books.map(({ id, name, abbreviation, title, chapters }) => ({
       id,
       name,
-      abbreviation,
+      abbreviation: abbreviation ?? name,
       title,
       verses: chapters.map((chapter) => chapter.verses.length)
     }))

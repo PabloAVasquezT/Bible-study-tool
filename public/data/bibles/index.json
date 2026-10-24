@@ -4,5 +4,11 @@
     "name": "King James Version",
     "abbreviation": "KJV",
     "language": "en"
+  },
+  {
+    "id": "rv1909",
+    "name": "Reina-Valera 1909",
+    "abbreviation": "RV1909",
+    "language": "es"
   }
 ]

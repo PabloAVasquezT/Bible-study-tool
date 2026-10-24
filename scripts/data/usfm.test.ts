@@ -23,6 +23,18 @@ test('reads book names, Strong numbers and added words', () => {
   ])
 })
 
+test('reads words tagged with several Strong numbers', () => {
+  const book = parseUsfm('\\id MAT\n\\toc2 Mateo\n\\c 1\n\\p\n\\v 1 \\w de Jesucristo|strong="G2424,G5547"\\w*.\n')
+  assert.deepEqual(book.chapters[0]!.verses[0]!.text, [{ t: 'de Jesucristo', s: 'G2424 G5547' }, '.'])
+  assert.throws(() => parseUsfm('\\id MAT\n\\toc2 Mateo\n\\c 1\n\\v 1 \\w x|strong="G1,X2"\\w*\n'), /Unsupported Strong/)
+})
+
+test('keeps the last of repeated header lines', () => {
+  const book = parseUsfm('\\id JOS\n\\h Josué\n\\toc1 Josué\n\\toc1 Josué\n\\c 1\n\\p\n\\v 1 Y.\n')
+  assert.equal(book.title, 'Josué')
+  assert.equal(book.name, 'Josué')
+})
+
 test('reads psalm titles, stanzas and the divine name', () => {
   const book = parseUsfm(
     '\\id PSA\n\\toc2 Psalms\n\\c 1\n\\q1\n\\v 1 Blessed.\n\\c 2\n\\d A \\w Psalm|strong="H4210"\\w* of David.\n' +

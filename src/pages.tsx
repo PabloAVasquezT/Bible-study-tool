@@ -46,13 +46,24 @@ export function LoadingPage() {
 interface ErrorBoundaryProps {
   children: ReactNode
   fallback: (error: Error) => ReactNode
+  /** Clears the error when it changes, e.g. on navigation. */
+  resetKey: string
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, { error?: Error }> {
-  state: { error?: Error } = {}
+interface ErrorBoundaryState {
+  error?: Error
+  resetKey: string
+}
 
-  static getDerivedStateFromError(error: unknown): { error: Error } {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  state: ErrorBoundaryState = { resetKey: this.props.resetKey }
+
+  static getDerivedStateFromError(error: unknown): Partial<ErrorBoundaryState> {
     return { error: error instanceof Error ? error : new Error(String(error)) }
+  }
+
+  static getDerivedStateFromProps(props: ErrorBoundaryProps, state: ErrorBoundaryState): Partial<ErrorBoundaryState> | null {
+    return props.resetKey === state.resetKey ? null : { error: undefined, resetKey: props.resetKey }
   }
 
   render() {

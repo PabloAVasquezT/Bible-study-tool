@@ -7,7 +7,7 @@ import { isBookId, type BookId } from '../../src/lib/books.ts'
 export interface UsfmBook {
   id: BookId
   name: string
-  abbreviation: string
+  abbreviation?: string
   title: string
   chapters: Chapter[]
 }
@@ -112,6 +112,8 @@ export function parseUsfm(source: string): UsfmBook {
     if (HEADER_MARKERS.has(name)) {
       endBlock()
       headerField = name
+      // Some sources repeat a header line; the last one wins.
+      header.set(name, '')
       return
     }
     if (name in STYLE_FLAGS) {
@@ -237,7 +239,7 @@ export function parseUsfm(source: string): UsfmBook {
   return {
     id: id as BookId,
     name,
-    abbreviation: value('toc3') ?? name,
+    abbreviation: value('toc3'),
     title: value('toc1') ?? value('mt1') ?? name,
     chapters
   }
@@ -247,13 +249,18 @@ function flagsOf(styles: Style[]): number {
   return styles.reduce((flags, style) => flags | style.flag, 0)
 }
 
-/** Normalizes `strong="H0430"` to `H430`. */
+/** Normalizes `strong="H0430"` to `H430`, and `strong="G2424,G5547"` to `G2424 G5547`. */
 function parseStrong(attributes: string, fail: (message: string) => never): string | undefined {
   const value = /\bstrong="([^"]*)"/.exec(attributes)?.[1]
   if (value === undefined) return undefined
-  const match = /^([HG])0*(\d+)$/.exec(value)
-  if (!match) fail(`Unsupported Strong's number "${value}"`)
-  return match![1]! + match![2]!
+  return value
+    .split(',')
+    .map((part) => {
+      const match = /^([HG])0*(\d+)$/.exec(part.trim())
+      if (!match) fail(`Unsupported Strong's number "${value}"`)
+      return match![1]! + match![2]!
+    })
+    .join(' ')
 }
 
 /** Appends text, merging it with the previous run when they have the same style. */

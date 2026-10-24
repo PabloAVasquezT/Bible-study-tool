@@ -24,6 +24,8 @@ type Block = { kind: 'heading'; heading: Inline[] } | TextBlock
 function toBlocks(verses: Verse[]): Block[] {
   const blocks: Block[] = []
   verses.forEach((verse, index) => {
+    // Empty verses are versification placeholders: their text is numbered elsewhere in this Bible.
+    if (!verse.text.length && !verse.heading) return
     if (verse.heading) blocks.push({ kind: 'heading', heading: verse.heading })
     const last = blocks.at(-1)
     let block: TextBlock

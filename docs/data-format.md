@@ -64,14 +64,16 @@ A book is a list of chapters, and a chapter is a list of verses. Chapter and ver
 |---|---|
 | `break` | Optional. `paragraph` starts a new paragraph, `line` a new poetry line, `stanza` a new poetry stanza. Without it, the verse continues the current paragraph. |
 | `heading` | Optional. A heading shown before the verse, such as "ב BETH." in Psalm 119. |
-| `text` | The verse text, as a list of inlines. |
+| `text` | The verse text, as a list of inlines. It can be empty: see below. |
+
+All Bibles share the KJV's chapter and verse slots, so the same index points to the same slot in every Bible. Some translations number a few passages differently; the Spanish RV1909 starts Jonah 2 with the verse the KJV numbers Jonah 1:17. Our RV1909 source keeps the Spanish numbering inside the KJV slots, which leaves 18 slots empty (and, in a few places, two Spanish verses merged into one slot). An empty verse is such a placeholder: the reader skips it.
 
 **Inline**
 
 Each inline is one of:
 
 - A **string**: plain text.
-- A **word**, `{ "t": text, "s"?: strong, "f"?: flags }`: a run of text with a Strong's number and/or style flags. Strong's numbers are normalized to a letter and a number without leading zeros (`H430`, `G26`), matching the lexicon keys.
+- A **word**, `{ "t": text, "s"?: strong, "f"?: flags }`: a run of text with Strong's numbers and/or style flags. Strong's numbers are normalized to a letter and a number without leading zeros (`H430`, `G26`), matching the lexicon keys. A word that translates several original words has several numbers separated by spaces: in the RV1909, "de Jesucristo" is `G2424 G5547`.
 - A **note**, `{ "note": inlines }`: a translator's or marginal note, placed where it appears in the text.
 
 The flags are a bit mask:

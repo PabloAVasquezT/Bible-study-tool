@@ -19,7 +19,7 @@ export function App() {
   if (!passage) return <NotFoundPage />
 
   return (
-    <ErrorBoundary key={`${passage.bible}/${passage.book}`} fallback={(error) => <ErrorPage error={error} />}>
+    <ErrorBoundary resetKey={path} fallback={(error) => <ErrorPage error={error} />}>
       <Suspense fallback={<LoadingPage />}>
         <ReaderPage passage={passage} />
       </Suspense>

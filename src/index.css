@@ -126,6 +126,19 @@ body {
     box-shadow: 0 10px 30px rgb(0 0 0 / 0.15);
   }
 
+  .menu-popover {
+    width: min(22rem, calc(100vw - 2rem));
+    margin: auto;
+    padding: 0.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.75rem;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-size: 0.9375rem;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.15);
+  }
+
+  .menu-popover::backdrop,
   .note-popover::backdrop {
     background: rgb(0 0 0 / 0.2);
   }

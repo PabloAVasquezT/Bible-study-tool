@@ -1,5 +1,5 @@
 // Loads the static data in public/data/. Promises are cached so React's use() can read them.
-import type { BibleInfo, BookFile } from './lib/bible.ts'
+import type { BibleInfo, BibleSummary, BookFile } from './lib/bible.ts'
 import type { BookId } from './lib/books.ts'
 
 const cache = new Map<string, Promise<unknown>>()
@@ -16,6 +16,10 @@ function load<T>(path: string): Promise<T> {
     cache.set(path, promise)
   }
   return promise as Promise<T>
+}
+
+export function loadBibles(): Promise<BibleSummary[]> {
+  return load('bibles/index.json')
 }
 
 export function loadBibleInfo(bible: string): Promise<BibleInfo> {
