@@ -1,8 +1,22 @@
 // Small per-device preferences. Storage can be unavailable (private mode, blocked
 // site data), so every access is guarded and the app works without it.
 import { useState } from 'react'
+import { parsePassagePath } from './lib/passage.ts'
 
 const PREFIX = 'bible-study-tool:'
+
+export const DEFAULT_PASSAGE = '/kjv/gen/1'
+
+/** The last chapter read, as a path, or Genesis 1 in the KJV. */
+export function lastPassage(): string {
+  const last = readPreference('lastPassage', DEFAULT_PASSAGE)
+  return parsePassagePath(last) ? last : DEFAULT_PASSAGE
+}
+
+/** The Bible being read, which Bible references elsewhere in the app open in. */
+export function readingBible(): string {
+  return parsePassagePath(lastPassage())!.bible
+}
 
 export function readPreference<T>(key: string, fallback: T): T {
   try {

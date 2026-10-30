@@ -1,7 +1,7 @@
 import { use, useEffect, type ReactNode } from 'react'
-import { ArrowLeft } from './components/icons/index.tsx'
-import { loadBibleInfo, loadBibles, loadCrossReferenceInfo, loadLexicons } from './data.ts'
-import { Link } from './router.tsx'
+import { AppNav } from './components/AppNav.tsx'
+import { PageHeader } from './components/PageHeader.tsx'
+import { loadBibleInfo, loadBibles, loadCrossReferenceInfo, loadDevotionals, loadDictionaries, loadLexicons } from './data.ts'
 
 const REPOSITORY = 'https://github.com/PabloAVasquezT/Bible-study-tool'
 
@@ -11,6 +11,8 @@ export function CreditsPage() {
   const bibles = use(loadBibles()).map((bible) => use(loadBibleInfo(bible.id)))
   const lexicons = use(loadLexicons())
   const crossReferences = use(loadCrossReferenceInfo())
+  const dictionaries = use(loadDictionaries())
+  const devotionals = use(loadDevotionals())
 
   useEffect(() => {
     document.title = 'Credits · Bible Study Tool'
@@ -18,15 +20,8 @@ export function CreditsPage() {
   }, [])
 
   return (
-    <div className="min-h-dvh pb-[env(safe-area-inset-bottom)]">
-      <header className="sticky top-0 z-10 border-b border-line bg-canvas/90 pt-[env(safe-area-inset-top)] backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-3xl items-center gap-2 px-2">
-          <Link to="/" className="icon-button" aria-label="Back to the reader">
-            <ArrowLeft />
-          </Link>
-          <h1 className="font-semibold">Credits</h1>
-        </div>
-      </header>
+    <div className="min-h-dvh">
+      <PageHeader title="Credits" back={{ to: '/', label: 'Back to the reader' }} />
 
       <main className="mx-auto max-w-prose px-5 pt-8 pb-12 leading-relaxed">
         <p className="text-ink-muted">
@@ -52,6 +47,21 @@ export function CreditsPage() {
               {lexicon.changes}
             </Credit>
           ))}
+          {dictionaries.map((dictionary) => (
+            <Credit key={dictionary.id} name={dictionary.name}>
+              {dictionary.license}. From <ExternalLink href={dictionary.source.url}>{dictionary.source.name}</ExternalLink>.{' '}
+              {dictionary.changes}
+            </Credit>
+          ))}
+        </Section>
+
+        <Section title="Devotionals">
+          {devotionals.map((devotional) => (
+            <Credit key={devotional.id} name={`${devotional.name}, by ${devotional.author}`}>
+              {devotional.license}. From <ExternalLink href={devotional.source.url}>{devotional.source.name}</ExternalLink>.{' '}
+              {devotional.changes}
+            </Credit>
+          ))}
         </Section>
 
         <Section title="Cross references">
@@ -74,6 +84,7 @@ export function CreditsPage() {
           </Credit>
         </Section>
       </main>
+      <AppNav />
     </div>
   )
 }

@@ -151,6 +151,24 @@ body {
     display: none;
   }
 
+  /* A folded reading: its first lines, fading out. */
+  .folded {
+    max-height: 8.5em;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, black 55%, transparent);
+  }
+
+  .article-link {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+    text-underline-offset: 0.15em;
+  }
+
+  .article-link:hover {
+    text-decoration-color: currentColor;
+  }
+
   .search-match {
     border-radius: 0.2em;
     background: var(--color-accent-soft);

@@ -1,14 +1,13 @@
 // Generates public/data/crossrefs/ from the OpenBible.info cross-references.
 // Usage: npm run data:crossrefs (after npm run data:bibles, whose KJV verse counts it checks against)
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import type { BibleInfo } from '../../src/lib/bible.ts'
-import { parseVerseRange, type CrossReferenceFile, type CrossReferenceInfo, type VerseRef } from '../../src/lib/crossrefs.ts'
+import { parseVerseRange, type CrossReferenceFile, type CrossReferenceInfo } from '../../src/lib/crossrefs.ts'
 import { groupByVerse, parseOpenBible } from './crossrefs.ts'
 import { loadSource } from './download.ts'
+import { DATA_DIR, loadKjv } from './kjv.ts'
 import { readZip } from './zip.ts'
 
-const DATA_DIR = join(import.meta.dirname, '..', '..', 'public', 'data')
 const OUT_DIR = join(DATA_DIR, 'crossrefs')
 
 // OpenBible follows the ESV, which splits the KJV's 3 John 1:14 into verses 14 and 15.
@@ -27,9 +26,7 @@ const info: Omit<CrossReferenceInfo, 'references'> = {
     'Converted to JSON and sorted by votes. References voted down or not voted on are omitted, and 3 John 1:15 is mapped to the KJV’s 3 John 1:14.'
 }
 
-const kjv = JSON.parse(await readFile(join(DATA_DIR, 'bibles', 'kjv', 'index.json'), 'utf8')) as BibleInfo
-const verseCounts = new Map(kjv.books.map((book) => [book.id, book.verses]))
-const exists = ({ book, chapter, verse }: VerseRef): boolean => verse <= (verseCounts.get(book)?.[chapter - 1] ?? 0)
+const { info: kjv, exists } = await loadKjv()
 
 const archive = readZip(await loadSource('openbible-crossrefs'))
 const tsv = archive.get('cross_references.txt')
@@ -44,10 +41,7 @@ let total = 0
 for (const [source, targets] of grouped) {
   const { start } = parseVerseRange(source)!
   for (const target of targets) {
-    const range = parseVerseRange(target)!
-    for (const ref of [range.start, range.end]) {
-      if (ref && !exists(ref)) throw new Error(`${source} → ${target}: no such verse in the KJV`)
-    }
+    if (!exists(parseVerseRange(target)!)) throw new Error(`${source} → ${target}: no such verse in the KJV`)
   }
   if (!exists(start)) throw new Error(`${source}: no such verse in the KJV`)
   files.get(start.book)!.chapters[start.chapter - 1]![start.verse - 1] = targets

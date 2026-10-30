@@ -17,7 +17,9 @@
     "data:bibles": "node scripts/data/build-bibles.ts",
     "data:lexicons": "node scripts/data/build-lexicons.ts",
     "data:crossrefs": "node scripts/data/build-crossrefs.ts",
-    "data:search": "node scripts/data/build-search.ts"
+    "data:search": "node scripts/data/build-search.ts",
+    "data:dictionaries": "node scripts/data/build-dictionaries.ts",
+    "data:devotionals": "node scripts/data/build-devotionals.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

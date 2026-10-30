@@ -1,28 +1,34 @@
 import { Suspense, useEffect, type ReactNode } from 'react'
 import { CreditsPage } from './CreditsPage.tsx'
-import { parsePassagePath, parseSearchPath } from './lib/passage.ts'
+import { DictionaryEntryPage, DictionaryPage } from './DictionaryPage.tsx'
+import { dictionaryPath, parseDictionaryPath, parsePassagePath, parseSearchPath } from './lib/passage.ts'
 import { ErrorBoundary, ErrorPage, LoadingPage, NotFoundPage } from './pages.tsx'
-import { readPreference } from './preferences.ts'
+import { lastPassage } from './preferences.ts'
 import { ReaderPage } from './ReaderPage.tsx'
 import { navigate, usePath } from './router.tsx'
 import { SearchPage } from './SearchPage.tsx'
 
-const DEFAULT_PATH = '/kjv/gen/1'
+// Short paths for the sections that have only one source so far.
+const REDIRECTS: Record<string, () => string> = {
+  '/': lastPassage,
+  '/dictionary': () => dictionaryPath('easton')
+}
 
 export function App() {
   const path = usePath()
   const [pathname = '/', search = ''] = path.split('?')
 
-  if (pathname === '/') {
-    const last = readPreference('lastPassage', DEFAULT_PATH)
-    return <Redirect to={parsePassagePath(last) ? last : DEFAULT_PATH} />
-  }
+  const redirect = REDIRECTS[pathname.replace(/(.)\/$/, '$1')]
+  if (redirect) return <Redirect to={redirect()} />
 
   let page: ReactNode
   const passage = parsePassagePath(pathname)
   const searchBible = parseSearchPath(pathname)
+  const dictionary = parseDictionaryPath(pathname)
   if (passage) page = <ReaderPage passage={passage} />
   else if (searchBible) page = <SearchPage bible={searchBible} query={new URLSearchParams(search).get('q') ?? ''} />
+  else if (dictionary?.entry) page = <DictionaryEntryPage dictionary={dictionary.dictionary} entry={dictionary.entry} />
+  else if (dictionary) page = <DictionaryPage dictionary={dictionary.dictionary} />
   else if (pathname === '/credits') page = <CreditsPage />
   else return <NotFoundPage />
 

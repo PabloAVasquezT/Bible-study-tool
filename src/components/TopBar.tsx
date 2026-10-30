@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { BibleSummary } from '../lib/bible.ts'
 import { Link } from '../router.tsx'
-import { ChevronDown, ChevronLeft, ChevronRight, Search } from './icons/index.tsx'
+import { ChevronDown, ChevronLeft, ChevronRight } from './icons/index.tsx'
 import { VersionMenu } from './VersionMenu.tsx'
 
 interface TopBarProps {
@@ -9,7 +9,6 @@ interface TopBarProps {
   bibles: BibleSummary[]
   bible: BibleSummary
   versionHref: (bible: string) => string
-  searchHref: string
   previousHref?: string
   nextHref?: string
   showStrong: boolean
@@ -22,7 +21,6 @@ export function TopBar({
   bibles,
   bible,
   versionHref,
-  searchHref,
   previousHref,
   nextHref,
   showStrong,
@@ -47,10 +45,6 @@ export function TopBar({
           </button>
           <VersionMenu bibles={bibles} current={bible} hrefFor={versionHref} />
         </div>
-
-        <Link to={searchHref} className="icon-button" aria-label="Search" title="Search (/)">
-          <Search />
-        </Link>
 
         <button
           type="button"

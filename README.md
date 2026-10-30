@@ -2,7 +2,7 @@
 
 A free Bible study app for the web. It runs entirely in the browser: there is no backend and nothing to install, and it is designed for phones as well as desktops.
 
-> **Status:** early development. You can read the KJV and the Reina-Valera 1909, search them by word or Strong's number, look up Strong's numbers in the Greek and Hebrew dictionaries, and follow cross-references from any verse.
+> **Status:** early development. You can read the KJV and the Reina-Valera 1909, search them by word or Strong's number, look up Strong's numbers in the Greek and Hebrew dictionaries, follow cross-references from any verse, read what Spurgeon's *Morning and Evening* says about it, and look things up in Easton's Bible Dictionary.
 
 ## Goals
 
@@ -25,6 +25,8 @@ All bundled texts come from openly licensed sources and keep their own licenses,
 | Strong's Greek dictionary | [morphgnt/strongs-dictionary-xml](https://github.com/morphgnt/strongs-dictionary-xml) | CC0 1.0 |
 | Strong's Hebrew dictionary, by the Open Scriptures Hebrew Bible Project | [openscriptures/HebrewLexicon](https://github.com/openscriptures/HebrewLexicon) | CC BY 4.0 |
 | Cross-references (based on the Treasury of Scripture Knowledge) | [OpenBible.info](https://www.openbible.info/labs/cross-references/) | CC BY 4.0 |
+| Easton's Bible Dictionary (1897) | [CrossWire Bible Society](https://www.crosswire.org/sword/modules/ModInfo.jsp?modName=Easton), text from CCEL | Public domain |
+| C. H. Spurgeon, *Morning and Evening* | [CrossWire Bible Society](https://www.crosswire.org/sword/modules/ModInfo.jsp?modName=SME), text from CCEL | Public domain |
 
 The fonts [Inter](https://github.com/rsms/inter) and [Literata](https://github.com/googlefonts/literata) are bundled under the SIL Open Font License 1.1 (see `src/assets/fonts/*/OFL.txt`).
 
@@ -45,6 +47,8 @@ npm run data:bibles    # regenerate public/data/bibles/ from the upstream source
 npm run data:lexicons  # regenerate public/data/lexicons/
 npm run data:crossrefs # regenerate public/data/crossrefs/ (after data:bibles)
 npm run data:search    # regenerate public/data/search/ (after data:bibles)
+npm run data:dictionaries # regenerate public/data/dictionaries/ (after data:bibles)
+npm run data:devotionals  # regenerate public/data/devotionals/ (after data:bibles)
 ```
 
 The generated data is committed, so you only need to regenerate it when a source or the converter changes. See [docs/data-format.md](docs/data-format.md) for the file layout.

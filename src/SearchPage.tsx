@@ -1,5 +1,6 @@
 import { Fragment, Suspense, use, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { ArrowLeft, Search } from './components/icons/index.tsx'
+import { AppNav } from './components/AppNav.tsx'
+import { Search } from './components/icons/index.tsx'
 import { VersionMenu } from './components/VersionMenu.tsx'
 import { loadBibleInfo, loadBibles, loadBook, searchVerses } from './data.ts'
 import { InlineFlag, type BibleInfo, type Inline } from './lib/bible.ts'
@@ -30,12 +31,9 @@ export function SearchPage({ bible, query }: { bible: string; query: string }) {
   }
 
   return (
-    <div className="min-h-dvh pb-[env(safe-area-inset-bottom)]">
+    <div className="min-h-dvh">
       <header className="sticky top-0 z-10 border-b border-line bg-canvas/90 pt-[env(safe-area-inset-top)] backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-3xl items-center gap-1 px-2">
-          <Link to="/" className="icon-button" aria-label="Back to the reader">
-            <ArrowLeft />
-          </Link>
+        <div className="mx-auto flex h-14 max-w-3xl items-center gap-1 px-3">
           <form role="search" onSubmit={submit} className="flex min-w-0 flex-1 items-center gap-2 rounded-lg bg-sunken px-3 py-1.5">
             <Search width={16} height={16} className="shrink-0 text-ink-faint" />
             <input
@@ -62,6 +60,7 @@ export function SearchPage({ bible, query }: { bible: string; query: string }) {
           <Help />
         )}
       </main>
+      <AppNav current="search" />
     </div>
   )
 }

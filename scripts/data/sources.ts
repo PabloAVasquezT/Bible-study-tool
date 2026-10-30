@@ -20,6 +20,15 @@ export const sources = {
     url: 'https://raw.githubusercontent.com/morphgnt/strongs-dictionary-xml/dd6758b82f46b620804a8ea677d715844679eea1/strongsgreek.xml',
     sha256: '91474213b208a4e487d35f85c10e5c90737acc69082dad15dec5431406003545'
   },
+  // CrossWire's module packages are not versioned either: the hash pins them.
+  'crosswire-easton': {
+    url: 'https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/Easton.zip',
+    sha256: 'f6dd054554764e2e97d5d189a697eb26039054578a9ccf98ce668ab810341c6e'
+  },
+  'crosswire-sme': {
+    url: 'https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/SME.zip',
+    sha256: '05dbf239295bd39ffd48713d2255a38d5219e70c77d32f129a0c2d969d55174c'
+  },
   // Not versioned upstream: the hash is what pins it.
   'openbible-crossrefs': {
     url: 'https://a.openbible.info/data/cross-references.zip',

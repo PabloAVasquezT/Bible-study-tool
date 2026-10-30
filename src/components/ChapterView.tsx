@@ -72,7 +72,7 @@ export function ChapterView({
           replace
           onClick={() => onVerseSelect(n)}
           className="verse-number"
-          aria-label={`Verse ${n}: cross references`}
+          aria-label={`Verse ${n}: study this verse`}
         >
           {n}
         </Link>

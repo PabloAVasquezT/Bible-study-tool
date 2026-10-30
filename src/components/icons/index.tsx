@@ -54,6 +54,22 @@ export const ArrowRight = (props: SVGProps<SVGSVGElement>) => (
   </Icon>
 )
 
+export const BookOpen = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="M12 5v16" />
+    <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+  </Icon>
+)
+
+export const Library = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="m16 6 4 14" />
+    <path d="M12 6v14" />
+    <path d="M8 8v12" />
+    <path d="M4 4v16" />
+  </Icon>
+)
+
 export const Search = (props: SVGProps<SVGSVGElement>) => (
   <Icon {...props}>
     <path d="m21 21-4.34-4.34" />

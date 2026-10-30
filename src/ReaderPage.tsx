@@ -1,6 +1,7 @@
 import { use, useEffect, useState } from 'react'
+import { AppNav } from './components/AppNav.tsx'
 import { ChapterView } from './components/ChapterView.tsx'
-import { CrossReferencePanel } from './components/CrossReferencePanel.tsx'
+import { VersePanel } from './components/VersePanel.tsx'
 import { ArrowLeft, ArrowRight } from './components/icons/index.tsx'
 import { OpenStrongContext } from './components/Inlines.tsx'
 import { LexiconPanel } from './components/LexiconPanel.tsx'
@@ -19,7 +20,7 @@ export function ReaderPage({ passage }: { passage: Passage }) {
   const [showStrong, setShowStrong] = usePreference('showStrong', false)
   const [pickerOpen, setPickerOpen] = useState(false)
   const [strong, setStrong] = useState<string>()
-  const [crossReferenceVerse, setCrossReferenceVerse] = useState<number>()
+  const [studyVerse, setStudyVerse] = useState<number>()
 
   const bookInfo = info.books.find((b) => b.id === passage.book)
   const chapter = book.chapters[passage.chapter - 1]
@@ -41,7 +42,7 @@ export function ReaderPage({ passage }: { passage: Passage }) {
   // On keyboards, the arrow keys move between chapters and "/" opens the search.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
-      if (pickerOpen || strong || crossReferenceVerse || event.altKey || event.ctrlKey || event.metaKey) return
+      if (pickerOpen || strong || studyVerse || event.altKey || event.ctrlKey || event.metaKey) return
       if (event.key === '/') {
         event.preventDefault()
         navigate(searchPath(passage.bible))
@@ -61,13 +62,12 @@ export function ReaderPage({ passage }: { passage: Passage }) {
     `${info.books.find((b) => b.id === ref.book)?.name ?? ref.book} ${ref.chapter}`
 
   return (
-    <div className="min-h-dvh pb-[env(safe-area-inset-bottom)]">
+    <div className="min-h-dvh">
       <TopBar
         label={label}
         bibles={bibles}
         bible={info}
         versionHref={(bible) => passagePath({ ...passage, bible })}
-        searchHref={searchPath(passage.bible)}
         previousHref={previous && pathOf(previous)}
         nextHref={next && pathOf(next)}
         showStrong={showStrong}
@@ -84,7 +84,7 @@ export function ReaderPage({ passage }: { passage: Passage }) {
             chapter={chapter}
             selectedVerse={passage.verse}
             verseHref={(verse) => passagePath({ ...passage, verse })}
-            onVerseSelect={setCrossReferenceVerse}
+            onVerseSelect={setStudyVerse}
             showStrong={showStrong}
           />
         </OpenStrongContext>
@@ -112,12 +112,13 @@ export function ReaderPage({ passage }: { passage: Passage }) {
           </Link>
         </p>
       </main>
+      <AppNav current="bible" />
 
       <LexiconPanel strong={strong} onClose={() => setStrong(undefined)} />
-      <CrossReferencePanel
+      <VersePanel
         bible={info}
-        verse={crossReferenceVerse === undefined ? undefined : { book: passage.book, chapter: passage.chapter, verse: crossReferenceVerse }}
-        onClose={() => setCrossReferenceVerse(undefined)}
+        verse={studyVerse === undefined ? undefined : { book: passage.book, chapter: passage.chapter, verse: studyVerse }}
+        onClose={() => setStudyVerse(undefined)}
       />
 
       <PassagePicker

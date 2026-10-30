@@ -207,3 +207,47 @@ A word file maps each word to the verses that contain it, and a Strong's file ma
 ```
 
 Words are indexed in their normalized form, which the app also applies to queries: lowercase, without accents (`crió` → `crio`) or ligatures (`Æneas` → `aeneas`), but keeping ñ. Notes are not indexed. A query finds the verses that contain all of its terms: words, prefixes ending in `*` (looked up among the words of one file), and Strong's numbers such as `G26`.
+
+## Dictionaries and devotionals
+
+Easton's Bible Dictionary and Spurgeon's *Morning and Evening* come from [CrossWire](https://www.crosswire.org/sword/modules/) SWORD modules, which are public domain. [`scripts/data/sword.ts`](../scripts/data/sword.ts) reads their zLD format and [`scripts/data/articles.ts`](../scripts/data/articles.ts) converts the TEI (Easton) and OSIS (Spurgeon) markup. Generate them after the Bibles, because every Bible reference is checked against the KJV:
+
+```sh
+npm run data:dictionaries
+npm run data:devotionals
+```
+
+```
+public/data/dictionaries/
+  index.json          list of dictionaries, with license and source
+  easton/
+    titles.json       [id, title] of every entry, in alphabetical order
+    a.json            entries whose id starts with "a"
+    ...
+public/data/devotionals/
+  index.json          list of devotionals
+  spurgeon/
+    01.json           the days of January
+    ...
+    passages.json     verse → the readings about it
+```
+
+An entry id is its title in lowercase with dashes (`zuph-land-of`). Where two entries would get the same id ("Hail" and "Hail!", and the two entries each for Kadesh and Salmon), the later ones get a suffix: `hail-2`. A devotional day is `MM.DD`, from `01.01` to `12.31` including `02.29`, with a `morning` and an `evening` reading.
+
+Both share one rich-text format: a list of blocks, each a paragraph `{ "p": inlines }` or a poem `{ "poem": [inlines, ...] }`, one list of inlines per line. An inline is one of:
+
+- A **string**: plain text, where `"\n"` is a line break.
+- A **style**, `{ "t": text, "style": "italic" | "smallCaps" }`.
+- A **Bible reference**, `{ "t": "Ex. 6:20", "ref": "EXO.6.20" }`, in the same form as the cross-references.
+- An **entry link**, `{ "t": "MOSES", "entry": "moses" }`, to another entry of the same dictionary.
+
+Easton's references were linked automatically, and many written with numbers only got the wrong book: "Ex. 4:14, 27-30" linked "27-30" to Genesis 1. Following Easton's own convention, such a reference continues the book and chapter of the reference before it, so "27-30" becomes Exodus 4:27–30; this repairs 795 references. References to whole chapters ("Num. 12") link to the chapter. The 29 that still cannot be resolved (the Apocrypha, misprints such as "Jer. 38:60") and the 67 links to entries this edition does not have are plain text. In the devotional, "Jude 24" and the like were tagged as Judges; a single-chapter book cited with one number is read as that verse (Jude 1:24).
+
+Every devotional reading opens with the verse it is about, quoted and referenced. `passages.json` maps each such verse to its readings, so that the reader can show the readings with that verse:
+
+```json
+{
+"JHN.15.19":[["10.28","morning"]],
+"GEN.1.4":[["01.05","morning"],["01.05","evening"],["07.09","evening"]]
+}
+```

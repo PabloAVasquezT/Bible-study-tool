@@ -1,0 +1,13 @@
+[
+  {
+    "id": "spurgeon",
+    "name": "Morning and Evening",
+    "author": "C. H. Spurgeon",
+    "license": "Public Domain",
+    "source": {
+      "name": "CrossWire Bible Society (text from CCEL)",
+      "url": "https://www.crosswire.org/sword/modules/ModInfo.jsp?modName=SME"
+    },
+    "changes": "Converted from OSIS to JSON."
+  }
+]

@@ -1,0 +1,13 @@
+[
+  {
+    "id": "easton",
+    "name": "Easton's Bible Dictionary",
+    "license": "Public Domain",
+    "source": {
+      "name": "CrossWire Bible Society (text from CCEL)",
+      "url": "https://www.crosswire.org/sword/modules/ModInfo.jsp?modName=Easton"
+    },
+    "changes": "M. G. Easton’s Illustrated Bible Dictionary, 3rd edition (1897), without its illustrations. Converted from TEI to JSON. References written with numbers only are linked to the book and chapter of the reference before them, which fixes hundreds that the source linked to the wrong book; the few that cannot be resolved are plain text.",
+    "entries": 3963
+  }
+]

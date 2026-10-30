@@ -1,26 +1,31 @@
 import { Suspense, use, useState } from 'react'
-import { loadBook, loadCrossReferenceInfo, loadCrossReferences } from '../data.ts'
+import { loadBook, loadCrossReferenceInfo, loadCrossReferences, loadDevotionalDay, loadDevotionalPassages, loadDevotionals } from '../data.ts'
+import type { DevotionalTime } from '../lib/articles.ts'
 import { plainText, type BibleInfo } from '../lib/bible.ts'
 import type { BookId } from '../lib/books.ts'
 import { formatVerseRange, parseVerseRange, rangeLabel, type VerseRange, type VerseRef } from '../lib/crossrefs.ts'
 import { passagePath } from '../lib/passage.ts'
 import { ErrorBoundary } from '../pages.tsx'
 import { Link } from '../router.tsx'
+import { ArticleBody } from './Article.tsx'
 import { Sheet, SheetFooter } from './Sheet.tsx'
 
 /** How many references to show before "Show all". */
 const FIRST_SHOWN = 10
 /** How many verses of a range the preview quotes. */
 const PREVIEW_VERSES = 3
+/** The devotional whose readings are shown with their verse. */
+export const VERSE_DEVOTIONAL = 'spurgeon'
 
-interface CrossReferencePanelProps {
+interface VersePanelProps {
   bible: BibleInfo
-  /** The verse to show references for, or undefined when the panel is closed. */
+  /** The verse to study, or undefined when the panel is closed. */
   verse?: VerseRef
   onClose: () => void
 }
 
-export function CrossReferencePanel({ bible, verse, onClose }: CrossReferencePanelProps) {
+/** What there is to read about a verse: Spurgeon's readings on it, then its cross-references. */
+export function VersePanel({ bible, verse, onClose }: VersePanelProps) {
   const bookName = (book: BookId): string => bible.books.find((info) => info.id === book)?.name ?? book
   const key = verse && formatVerseRange({ start: verse })
   return (
@@ -28,11 +33,52 @@ export function CrossReferencePanel({ bible, verse, onClose }: CrossReferencePan
       {verse && key && (
         <ErrorBoundary resetKey={key} fallback={(error) => <p className="text-ink-muted">{error.message}</p>}>
           <Suspense fallback={<ListSkeleton />}>
+            <DevotionalReadings key={`devotional ${key}`} verse={verse} onClose={onClose} />
             <CrossReferenceList key={key} bible={bible} verse={verse} bookName={bookName} onClose={onClose} />
           </Suspense>
         </ErrorBoundary>
       )}
     </Sheet>
+  )
+}
+
+function DevotionalReadings({ verse, onClose }: { verse: VerseRef; onClose: () => void }) {
+  const readings = use(loadDevotionalPassages(VERSE_DEVOTIONAL))[formatVerseRange({ start: verse })] ?? []
+  const info = use(loadDevotionals()).find((devotional) => devotional.id === VERSE_DEVOTIONAL)
+  if (!readings.length || !info) return null
+  return (
+    <section className="mb-8">
+      <h3 className="mb-3 text-xs font-semibold tracking-[0.15em] text-ink-muted uppercase">
+        {info.author}, {info.name}
+      </h3>
+      <div className="space-y-4">
+        {readings.map(([day, time]) => (
+          <Suspense key={`${day} ${time}`} fallback={<ListSkeleton rows={1} />}>
+            <DevotionalReading day={day} time={time} onClose={onClose} />
+          </Suspense>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+/** A reading, folded to its first paragraph until opened. */
+function DevotionalReading({ day, time, onClose }: { day: string; time: DevotionalTime; onClose: () => void }) {
+  const [open, setOpen] = useState(false)
+  const reading = use(loadDevotionalDay(VERSE_DEVOTIONAL, day))?.[time]
+  if (!reading) return null
+  // The first block quotes the verse being studied, so it is left out.
+  const blocks = reading.blocks.slice(1)
+  return (
+    <article className="rounded-xl border border-line p-4">
+      <p className="mb-2 font-sans text-sm font-semibold">{reading.title}</p>
+      <div className={open ? undefined : 'folded'}>
+        <ArticleBody blocks={open ? blocks : blocks.slice(0, 1)} onNavigate={onClose} />
+      </div>
+      <button type="button" onClick={() => setOpen(!open)} className="text-sm font-semibold text-accent hover:underline">
+        {open ? 'Show less' : 'Read the whole reading'}
+      </button>
+    </article>
   )
 }
 
@@ -108,10 +154,10 @@ function Preview({ bible, range }: { bible: string; range: VerseRange }) {
   return <p className="mt-0.5 line-clamp-3 font-serif text-[0.95rem] leading-snug text-ink-muted">{more ? `${text} …` : text}</p>
 }
 
-function ListSkeleton() {
+function ListSkeleton({ rows = 5 }: { rows?: number }) {
   return (
     <div className="animate-pulse space-y-4" aria-label="Loading">
-      {Array.from({ length: 5 }, (_, i) => (
+      {Array.from({ length: rows }, (_, i) => (
         <div key={i}>
           <div className="mb-2 h-4 w-28 rounded bg-sunken" />
           <div className="h-4 rounded bg-sunken" style={{ width: `${65 + ((i * 23) % 30)}%` }} />

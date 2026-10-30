@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import type { BookInfo } from './bible.ts'
-import { adjacentChapter, parsePassagePath, parseSearchPath, passagePath, searchPath } from './passage.ts'
+import { adjacentChapter, dictionaryPath, parseDictionaryPath, parsePassagePath, parseSearchPath, passagePath, searchPath } from './passage.ts'
+
+test('builds and recognizes dictionary paths', () => {
+  assert.equal(dictionaryPath('easton'), '/dictionary/easton')
+  assert.equal(dictionaryPath('easton', 'zuph-land-of'), '/dictionary/easton/zuph-land-of')
+  assert.deepEqual(parseDictionaryPath('/dictionary/easton/aaron'), { dictionary: 'easton', entry: 'aaron' })
+  assert.deepEqual(parseDictionaryPath('/dictionary/easton'), { dictionary: 'easton' })
+  assert.equal(parseDictionaryPath('/dictionary'), undefined)
+})
 
 test('builds and recognizes search paths', () => {
   assert.equal(searchPath('kjv'), '/kjv/search')
